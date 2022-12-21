@@ -10,14 +10,24 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:vscode-pluto-operations.current_cell_id"
+    "onCommand:vscode-pluto-operations.current_cell_id",
+    "onCommand:vscode-pluto-operations.add_cell_before",
+    "onCommand:vscode-pluto-operations.add_cell_after"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "vscode-pluto-operations.current_cell_id",
-        "title": "Current Cell ID"
+        "title": "Pluto: Current Cell ID"
+      },
+      {
+        "command": "vscode-pluto-operations.add_cell_before",
+        "title": "Pluto: Add Cell Before"
+      },
+      {
+        "command": "vscode-pluto-operations.add_cell_after",
+        "title": "Pluto: Add Cell After"
       }
     ]
   },
