@@ -1,6 +1,6 @@
 {
   "name": "vscode-pluto-operations",
-  "displayName": "vscode-pluto-operations",
+  "displayName": "Pluto Operations",
   "description": "Provide commands for basic notebook operations from vscode",
   "version": "0.0.1",
   "publisher": "disberd",
