@@ -3,6 +3,11 @@
   "displayName": "vscode-pluto-operations",
   "description": "Provide commands for basic notebook operations from vscode",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/disberd/vscode-pluto-operations"
+  },
+  "homepage": "https://github.com/disberd/vscode-pluto-operations",
   "engines": {
     "vscode": "^1.74.0"
   },
