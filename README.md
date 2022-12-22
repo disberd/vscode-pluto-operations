@@ -1,71 +1,25 @@
 # vscode-pluto-operations README
 
-This is the README for your extension "vscode-pluto-operations". After writing up a brief description, we recommend including the following sections.
+This is an extension to perform basic cell operations in [Pluto](https://github.com/fonsp/Pluto.jl/) notebook files. This can be useful when one wants to modify a notebook without a Pluto server running or even to perform basic operations directly on the file and exploit the auto-reload from file feature of Pluto.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+All the commands operate either __on__ or __based__ on the cell where the cursor is currently active. The active cell is parsed both when the crusor is inside the cell code as well as when it is on the list of Cell orders at the bottom of the notebook. 
+The following commands/functionalities are currently supported:
 
-For example if there is an image subfolder under your extension project workspace:
+### Add a cell
+The commands _Pluto: Add a Cell After_ and _Pluto: Add a Cell Before_ create a new empty cell and position it either after or before the currently active cell:
 
-\!\[feature X\]\(images/feature-x.png\)
+### Remove a cell
+The command _Pluto: Remove Cell_ deletes the currently active cell from the notebook
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
+### Move between Cell Code and Cell Order
+The command _Pluto: Go To Cell Code/Order_ moves both the cursor and the editor view between the code and the cell order for the currently active cell. 
+- When the command is invoked from the cell code, the cursor moves to the line of the active cells in the Cell Order section at the bottom of the notebook.
+- When the command is invoked from the Cell Order section at the bottom of the notebook, the cursor and editor view is moved to the active cell code definition.
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+### 0.0.1
 
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+Initial release 
