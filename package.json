@@ -2,7 +2,7 @@
   "name": "vscode-pluto-operations",
   "displayName": "Pluto Operations",
   "description": "Provide commands for basic notebook operations from vscode",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "publisher": "disberd",
   "repository": {
     "type": "git",
