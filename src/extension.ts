@@ -25,17 +25,15 @@ export function activate(context: vscode.ExtensionContext) {
 	}
 
 	type CellData = {
-		codeStart: number;
-		codeEnd: number;
-		orderLine: number;
+		codeRange: vscode.Range;
+		orderRange: vscode.Range;
 		hidden: boolean;
 	};
 
-	function newCellData(n: number): CellData {
+	function newCellData(r: vscode.Range): CellData {
 		return {
-			codeStart: n,
-			codeEnd: -1,
-			orderLine: -1,
+			codeRange: r,
+			orderRange: new vscode.Range(0,0,0,0),
 			hidden: false
 		};
 	}
@@ -51,12 +49,14 @@ export function activate(context: vscode.ExtensionContext) {
 			if (line.text.startsWith(_cellDelimiter)) {
 				if (cellStructure[tracking]) {
 					// We have to update the last line of the previous cell
-					cellStructure[tracking].codeEnd = n-1;
+					const cellData = cellStructure[tracking];
+					const endPosition = new vscode.Position(n,0);
+					cellData.codeRange = new vscode.Range(cellData.codeRange.start, endPosition);
 				}
 				const id = line.text.slice(-36);
 				// Update the tracking
 				tracking = id;
-				cellStructure[id] = newCellData(n);
+				cellStructure[id] = newCellData(line.range);
 			}
 			if (tracking === _mainfestId) {
 				// We stop when we find the manifest cell as it's the last one
@@ -68,7 +68,9 @@ export function activate(context: vscode.ExtensionContext) {
 			const line = document.lineAt(n);
 			if (line.text === _cellOrderString) {
 				// We reached the start of the cell order. We update the mainfest cell data to also save the last code line
-				cellStructure[_mainfestId].codeEnd = n-1;
+				const cellData = cellStructure[_mainfestId];
+				const endPosition = new vscode.Position(n,0);
+				cellData.codeRange = new vscode.Range(cellData.codeRange.start, endPosition);
 				break;
 			} else {
 				const text = line.text;
@@ -77,7 +79,7 @@ export function activate(context: vscode.ExtensionContext) {
 				const id = text.slice(-36);
 				const data = cellStructure[id];
 				data.hidden = text.startsWith(_hiddenCellDelimiter) ? true : false;
-				data.orderLine = n;
+				data.orderRange = line.rangeIncludingLineBreak;
 			}
 		}
 		return cellStructure;
@@ -89,14 +91,13 @@ export function activate(context: vscode.ExtensionContext) {
 		if (id === '') {
 			vscode.window.showErrorMessage('You are not currently over a valid cell');
 		}
-		// editor.edit(editBuilder => {
-		// 	const currentCell = cellStructure[id];
-		// 	editBuilder.delete(new vscode.Range(currentCell.codeStart, 0, currentCell.codeEnd+1))
-		// 	// Insert the cell in the order
-		// 	editBuilder.insert(newOrderPosition, _shownCellDelimiter + newId + '\n');
-		// 	// Insert the cell in the code
-		// 	editBuilder.insert(newCodePosition, _cellDelimiter + newId + '\n\n');
-		// });
+		editor.edit(editBuilder => {
+			const currentCell = cellStructure[id];
+			// Delete the order
+			editBuilder.delete(currentCell.orderRange);
+			// Delete the code
+			editBuilder.delete(currentCell.codeRange);
+		});
 	}
 	function addCell(editor: vscode.TextEditor, after: boolean = true) {
 		const cellStructure = extractStructure(editor);
@@ -107,8 +108,8 @@ export function activate(context: vscode.ExtensionContext) {
 		const newId = uuid.v4();
 		editor.edit(editBuilder => {
 			const currentCell = cellStructure[id];
-			const newCodePosition = new vscode.Position(after ? currentCell.codeEnd + 1 : currentCell.codeStart, 0);
-			const newOrderPosition = new vscode.Position(currentCell.orderLine + (after ? 1 : 0), 0);
+			const newCodePosition = after ? currentCell.codeRange.end : currentCell.codeRange.start;
+			const newOrderPosition = after ? currentCell.orderRange.end : currentCell.orderRange.start;
 			// Insert the cell in the order
 			editBuilder.insert(newOrderPosition, _shownCellDelimiter + newId + '\n');
 			// Insert the cell in the code
@@ -153,12 +154,32 @@ export function activate(context: vscode.ExtensionContext) {
 		return '';
 	}
 
+	function gotoCodeOrder() {
+		const editor = vscode.window.activeTextEditor;
+		if (editor) {
+			const cellStructure = extractStructure(editor);
+			const id = currentCellId(editor);
+			const cellData = cellStructure[id];
+			const currentPosition = editor.selection.active;
+			const r = cellData.codeRange.contains(currentPosition) ? cellData.orderRange : cellData.codeRange;
+			editor.selection = new vscode.Selection(r.start, r.start);
+			editor.revealRange(r);
+		}
+	}
+
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-pluto-operations.current_cell_id', showCellId));
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-pluto-operations.add_cell_after', addCellAfter));
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-pluto-operations.add_cell_before', addCellBefore));
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-pluto-operations.remove_cell', () => {
+		const editor = vscode.window.activeTextEditor;
+		if (editor) {
+			removeCell(editor);
+		}
+	}));
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-pluto-operations.goto_code_order', gotoCodeOrder));
 }
 
 // This method is called when your extension is deactivated
