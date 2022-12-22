@@ -22,7 +22,7 @@
     "onCommand:vscode-pluto-operations.goto_code_order",
     "onCommand:vscode-pluto-operations.remove_cell"
   ],
-  "main": "./out/extension.js",
+  "main": "./out/main.js",
   "contributes": {
     "commands": [
       {
