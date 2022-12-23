@@ -44,24 +44,31 @@ export function activate(context: vscode.ExtensionContext) {
 	function extractStructure(editor: vscode.TextEditor) {
 		const document = editor.document;
 		const cellStructure: { [id: string]: CellData } = {};
+		let hasManifest = true;
 		let tracking = '';
 		let n = 0;
 		// Process the first part of the code
 		for (n; n < document.lineCount; n++) {
 			const line = document.lineAt(n);
-			if (line.text.startsWith(_cellDelimiter)) {
+			const lineText = line.text;
+			const isOrderDelimiter = lineText === _cellOrderString;
+			if (isCellLine(lineText) || isOrderDelimiter) {
 				if (cellStructure[tracking]) {
 					// We have to update the last line of the previous cell
 					const cellData = cellStructure[tracking];
 					const endPosition = new vscode.Position(n,0);
 					cellData.codeRange = new vscode.Range(cellData.codeRange.start, endPosition);
 				}
-				const id = line.text.slice(-36);
-				// Update the tracking
-				tracking = id;
-				cellStructure[id] = newCellData(line.range);
+				if (isOrderDelimiter) {
+					hasManifest = false;
+				} else {
+					const id = line.text.slice(-36);
+					// Update the tracking
+					tracking = id;
+					cellStructure[id] = newCellData(line.range);
+				}
 			}
-			if (tracking === _mainfestId) {
+			if (!hasManifest || (tracking === _mainfestId)) {
 				// We stop when we find the manifest cell as it's the last one
 				break;
 			}
@@ -70,10 +77,12 @@ export function activate(context: vscode.ExtensionContext) {
 		for (n = document.lineCount - 1; n > 0; n--) {
 			const line = document.lineAt(n);
 			if (line.text === _cellOrderString) {
-				// We reached the start of the cell order. We update the mainfest cell data to also save the last code line
-				const cellData = cellStructure[_mainfestId];
-				const endPosition = new vscode.Position(n,0);
-				cellData.codeRange = new vscode.Range(cellData.codeRange.start, endPosition);
+				if (hasManifest) {
+					// We reached the start of the cell order. We update the mainfest cell data to also save the last code line
+					const cellData = cellStructure[_mainfestId];
+					const endPosition = new vscode.Position(n,0);
+					cellData.codeRange = new vscode.Range(cellData.codeRange.start, endPosition);
+				}
 				break;
 			} else {
 				const text = line.text;
@@ -131,8 +140,8 @@ export function activate(context: vscode.ExtensionContext) {
 		const cellStructure = extractStructure(editor);
 		const id = currentCellId(editor);
 		const cellData = cellStructure[id];
-		const newValue = (typeof force === undefined) ? !cellData.hidden : force;
-		const newDelimiter = newValue ? _shownCellDelimiter : _hiddenCellDelimiter;
+		const newValue = (force === undefined) ? !cellData.hidden : force;
+		const newDelimiter = newValue ? _hiddenCellDelimiter : _shownCellDelimiter;
 		editor.edit(editBuilder => {
 			editBuilder.replace(cellData.orderRange, newDelimiter + id + '\n');
 		});
