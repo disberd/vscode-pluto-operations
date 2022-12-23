@@ -18,10 +18,13 @@ export function activate(context: vscode.ExtensionContext) {
 	const _cellDelimiter = '# ╔═╡ ';
 	const _hiddenCellDelimiter = '# ╟─';
 	const _shownCellDelimiter = '# ╠═';
+	// This is broader than 
+	const uuidRegex = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i;
 
 	function isCellLine(linetext: string) {
-		const isCell = [_cellDelimiter, _hiddenCellDelimiter, _shownCellDelimiter].some(s => linetext.startsWith(s));
-		return isCell;
+		const hasCellDelimiter = [_cellDelimiter, _hiddenCellDelimiter, _shownCellDelimiter].some(s => linetext.startsWith(s));
+		const hasUUID = uuidRegex.test(linetext.slice(-36));
+		return hasCellDelimiter && hasUUID;
 	}
 
 	type CellData = {
