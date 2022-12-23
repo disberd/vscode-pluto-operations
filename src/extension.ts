@@ -127,6 +127,38 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	}
 
+	function toggleHidden(editor: vscode.TextEditor, force?: boolean) {
+		const cellStructure = extractStructure(editor);
+		const id = currentCellId(editor);
+		const cellData = cellStructure[id];
+		const newValue = (typeof force === undefined) ? !cellData.hidden : force;
+		const newDelimiter = newValue ? _shownCellDelimiter : _hiddenCellDelimiter;
+		editor.edit(editBuilder => {
+			editBuilder.replace(cellData.orderRange, newDelimiter + id + '\n');
+		});
+	}
+
+	function hideCell() {
+		const editor = vscode.window.activeTextEditor;
+		if (editor) {
+			toggleHidden(editor, true);
+		}
+	}
+
+	function showCell() {
+		const editor = vscode.window.activeTextEditor;
+		if (editor) {
+			toggleHidden(editor, false);
+		}
+	}
+
+	function toggleCellHidden() {
+		const editor = vscode.window.activeTextEditor;
+		if (editor) {
+			toggleHidden(editor);
+		}
+	}
+
 	function addCellBefore() {
 		const editor = vscode.window.activeTextEditor;
 		if (editor) {
@@ -176,6 +208,9 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-pluto-operations.current_cell_id', showCellId));
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-pluto-operations.add_cell_after', addCellAfter));
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-pluto-operations.add_cell_before', addCellBefore));
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-pluto-operations.hide_cell', hideCell));
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-pluto-operations.show_cell', showCell));
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-pluto-operations.toggle_cell_hidden', toggleCellHidden));
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-pluto-operations.remove_cell', () => {
 		const editor = vscode.window.activeTextEditor;
 		if (editor) {

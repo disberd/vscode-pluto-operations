@@ -19,6 +19,9 @@
     "onCommand:vscode-pluto-operations.current_cell_id",
     "onCommand:vscode-pluto-operations.add_cell_before",
     "onCommand:vscode-pluto-operations.add_cell_after",
+    "onCommand:vscode-pluto-operations.hide_cell",
+    "onCommand:vscode-pluto-operations.show_cell",
+    "onCommand:vscode-pluto-operations.toggle_cell_hidden",
     "onCommand:vscode-pluto-operations.goto_code_order",
     "onCommand:vscode-pluto-operations.remove_cell"
   ],
@@ -36,6 +39,18 @@
       {
         "command": "vscode-pluto-operations.add_cell_after",
         "title": "Pluto: Add Cell After"
+      },
+      {
+        "command": "vscode-pluto-operations.show_cell",
+        "title": "Pluto: Show Cell Code"
+      },
+      {
+        "command": "vscode-pluto-operations.hide_cell",
+        "title": "Pluto: Hide Cell Code"
+      },
+      {
+        "command": "vscode-pluto-operations.toggle_cell_hidden",
+        "title": "Pluto: Toggle Cell Code Hidden"
       },
       {
         "command": "vscode-pluto-operations.goto_code_order",
