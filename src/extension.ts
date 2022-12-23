@@ -88,7 +88,7 @@ export function activate(context: vscode.ExtensionContext) {
 		return cellStructure;
 	}
 
-	function removeCell(editor: vscode.TextEditor) {
+	function deleteCell(editor: vscode.TextEditor) {
 		const cellStructure = extractStructure(editor);
 		const id = currentCellId(editor);
 		if (id === '') {
@@ -211,10 +211,10 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-pluto-operations.hide_cell', hideCell));
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-pluto-operations.show_cell', showCell));
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-pluto-operations.toggle_cell_hidden', toggleCellHidden));
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-pluto-operations.remove_cell', () => {
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-pluto-operations.delete_cell', () => {
 		const editor = vscode.window.activeTextEditor;
 		if (editor) {
-			removeCell(editor);
+			deleteCell(editor);
 		}
 	}));
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-pluto-operations.goto_code_order', gotoCodeOrder));
