@@ -10,8 +10,12 @@ The following commands/functionalities are currently supported:
 ### Add a cell
 The commands _Pluto: Add a Cell After_ and _Pluto: Add a Cell Before_ create a new empty cell and position it either after or before the currently active cell:
 
+![Add a Cell](https://user-images.githubusercontent.com/12846528/209411369-26949e91-26bb-4fcc-8772-4b7c7997a9d0.gif)
+
 ### Delete a cell
-The command _Pluto: Delete Cell_ deletes the currently active cell from the notebook
+The command _Pluto: Delete Cell_ deletes the currently active cell from the notebook:
+
+![Delete a Cell](https://user-images.githubusercontent.com/12846528/209411452-51cb0a79-a775-4e4c-aa89-5b4c860f92aa.gif)
 
 ### Toggle Cell Code Hidden Status
 The commands _Pluto: Hide Cell Code_, _Pluto: Show Cell Code_ and _Pluto: Toggle Cell Code Hidden_ can be used to change the hidden status of the active cell code.
